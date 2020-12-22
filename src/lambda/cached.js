@@ -8,13 +8,13 @@ exports.handler = async (event, context) => {
   let date = date_ob.getDate();
   let month = date_ob.getMonth() + 1;
   let year = date_ob.getFullYear();
-
-  // prints date & time in YYYY-MM-DD format
-  console.log(year + "-" + month + "-" + date);
+  let hours = date_ob.getHours();
+  let minutes = date_ob.getMinutes();
+  let seconds = date_ob.getSeconds();
 
   return {
     statusCode: 200,
     headers: { 'Cache-Control': 'max-age=86400, public', },
-    body: year + "-" + month + "-" + date
+    body: year + "-" + month + "-" + date + " " + hours + ":" + minutes + ":" + seconds
   };
 };
