@@ -4,10 +4,13 @@ const REFRESH_TOKEN = process.env.REFRESH_TOKEN
 const CLIENT_TOKEN = process.env.CLIENT_TOKEN
 const TOKEN_ENDPOINT = 'https://accounts.spotify.com/api/token'
 
+const ARTISTS_ENDPOINT = 'https://api.spotify.com/v1/me/top/artists?limit=5'
+
 
 exports.handler = async (event, context) => {
   return getAccessToken()
-  // Next step, use the access Token
+    .then(result => { return getTopArtists(result.body) })
+    .catch(error => ({ statusCode: 422, body: String(error) }))
 };
 
 async function getAccessToken() {
@@ -21,5 +24,18 @@ async function getAccessToken() {
   })
     .then(response => response.json())
     .then(data => ({ statusCode: 200, body: data.access_token }))
+    .catch(error => ({ statusCode: 422, body: String(error) }));
+}
+
+async function getTopArtists(accessToken) {
+  return fetch(ARTISTS_ENDPOINT, {
+    headers: {
+      'Authorization': 'Bearer ' + accessToken,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    }
+  })
+    .then(response => response.json())
+    .then(data => ({ statusCode: 200, body: JSON.stringify(data.items) }))
     .catch(error => ({ statusCode: 422, body: String(error) }));
 }
