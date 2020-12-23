@@ -10,6 +10,11 @@ const ARTISTS_ENDPOINT = 'https://api.spotify.com/v1/me/top/artists?limit=5'
 exports.handler = async (event, context) => {
   return getAccessToken()
     .then(result => { return getTopArtists(result.body) })
+    .then(success => {
+      // Tell netlify to cache this response if possible
+      success.headers = { 'Cache-Control': 'max-age=86400, public', }
+      return success
+    })
     .catch(error => ({ statusCode: 422, body: String(error) }))
 };
 
