@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+const fetch = require('node-fetch')
 
 const REFRESH_TOKEN = process.env.REFRESH_TOKEN
 const CLIENT_TOKEN = process.env.CLIENT_TOKEN
@@ -12,7 +12,11 @@ exports.handler = async (event, context) => {
     .then(result => { return getTopArtists(result.body) })
     .then(success => {
       // Tell netlify to cache this response if possible
-      success.headers = { 'Cache-Control': 'max-age=86400, public', }
+      success.headers = {
+        'Cache-Control': 'max-age=86400, public',
+        'Access-Control-Allow-Origin': "*",
+        'content-type': 'application/json'
+      }
       return success
     })
     .catch(error => ({ statusCode: 422, body: String(error) }))
